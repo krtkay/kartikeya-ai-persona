@@ -17,10 +17,37 @@ class QueryRouter:
 
         self.registry = RepoRegistry()
 
-    def route(
-        self,
-        query
-    ):
+    def route(self,query):
+
+        query_lower = query.lower()
+
+        resume_keywords = [
+
+            "skill",
+            "skills",
+            "experience",
+            "education",
+            "internship",
+            "internships",
+            "resume",
+            "background",
+            "career",
+            "qualification",
+            "qualifications",
+            "technologies",
+            "tech stack",
+            "strengths"
+
+        ]
+
+        for keyword in resume_keywords:
+
+            if keyword in query_lower:
+
+                return {
+                    "repo": None,
+                    "document_type": "resume"
+                }
 
         repos = (
             self.registry
@@ -28,42 +55,42 @@ class QueryRouter:
         )
 
         prompt = f"""
-You are a query routing engine.
+    You are a query routing engine.
 
-Available repositories:
+    Available repositories:
 
-{repos}
+    {repos}
 
-Determine:
+    Determine:
 
-1. Which repository is being referenced.
-2. Which document type is needed.
+    1. Which repository is being referenced.
+    2. Which document type is needed.
 
-Document types:
+    Document types:
 
-- resume
-- readme
-- commit
+    - resume
+    - readme
+    - commit
 
-Rules:
+    Rules:
 
-- Questions about projects, architecture, tech stack, implementation → readme
-- Questions about updates, changes, commit history → commit
-- Questions about education, experience, skills, internships → resume
+    - Questions about projects, architecture, tech stack, implementation → readme
+    - Questions about updates, changes, commit history → commit
+    - Questions about education, experience, skills, internships → resume
 
-Return ONLY valid JSON.
+    Return ONLY valid JSON.
 
-Example:
+    Example:
 
-{{
-    "repo": "vulgarVeto",
-    "document_type": "commit"
-}}
+    {{
+        "repo": "vulgarVeto",
+        "document_type": "commit"
+    }}
 
-Question:
+    Question:
 
-{query}
-"""
+    {query}
+    """
 
         response = client.chat.completions.create(
             model="gpt-4.1-mini",
