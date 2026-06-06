@@ -1,27 +1,48 @@
 import streamlit as st
 import requests
 
-BACKEND_URL = "https://kartikeyas-ai-persona.onrender.com/chat"
+BACKEND_URL = (
+    "https://kartikeyas-ai-persona.onrender.com/chat"
+)
 
 st.set_page_config(
     page_title="Kartikeya AI Persona",
-    page_icon="🤖"
+    page_icon="🤖",
+    layout="wide"
 )
 
-st.title("🤖 Kartikeya AI Persona")
+st.title(
+    "🤖 Kartikeya AI Persona"
+)
 
 st.write(
-    "Ask about Kartikeya's experience, skills, projects, GitHub repositories, or schedule an interview."
+    """
+Ask about:
+
+• Skills
+• Experience
+• Projects
+• GitHub repositories
+• Technical decisions
+• Architecture
+• Career background
+"""
 )
 
-if "messages" not in st.session_state:
+if (
+    "messages"
+    not in st.session_state
+):
     st.session_state.messages = []
 
-for message in st.session_state.messages:
+for message in (
+    st.session_state.messages
+):
 
     with st.chat_message(
         message["role"]
     ):
+
         st.markdown(
             message["content"]
         )
@@ -39,7 +60,9 @@ if prompt:
         }
     )
 
-    with st.chat_message("user"):
+    with st.chat_message(
+        "user"
+    ):
         st.markdown(prompt)
 
     try:
@@ -47,13 +70,20 @@ if prompt:
         response = requests.post(
             BACKEND_URL,
             json={
-                "message": prompt
-            }
+                "message": prompt,
+                "history":
+                    st.session_state.messages
+            },
+            timeout=120
         )
 
-        answer = response.json()[
-            "response"
-        ]
+        answer = (
+            response.json()
+            .get(
+                "response",
+                "No response returned."
+            )
+        )
 
     except Exception as e:
 

@@ -14,7 +14,7 @@ class Retriever:
     def retrieve(
         self,
         query,
-        k=8,
+        k=15,
         document_type=None,
         repo=None
     ):

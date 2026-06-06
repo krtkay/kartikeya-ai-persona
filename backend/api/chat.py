@@ -16,6 +16,32 @@ def chat(
 
     question = payload["message"]
 
+    history = payload.get(
+        "history",
+        []
+    )
+
+    if history:
+
+        conversation = ""
+
+        for msg in history[-6:]:
+
+            conversation += (
+                f"{msg['role']}: "
+                f"{msg['content']}\n"
+            )
+
+        question = f"""
+Conversation History:
+
+{conversation}
+
+Current Question:
+
+{question}
+"""
+
     answer = rag.answer_question(
         question
     )

@@ -17,7 +17,10 @@ class QueryRouter:
 
         self.registry = RepoRegistry()
 
-    def route(self,query):
+    def route(
+        self,
+        query
+    ):
 
         query_lower = query.lower()
 
@@ -35,8 +38,21 @@ class QueryRouter:
             "qualification",
             "qualifications",
             "technologies",
-            "tech stack",
             "strengths"
+
+        ]
+
+        portfolio_keywords = [
+
+            "project",
+            "projects",
+            "portfolio",
+            "github",
+            "repositories",
+            "repository",
+            "built",
+            "created",
+            "worked on"
 
         ]
 
@@ -49,48 +65,59 @@ class QueryRouter:
                     "document_type": "resume"
                 }
 
+        for keyword in portfolio_keywords:
+
+            if keyword in query_lower:
+
+                return {
+                    "repo": None,
+                    "document_type": None
+                }
+
         repos = (
             self.registry
             .get_repo_names()
         )
 
         prompt = f"""
-    You are a query routing engine.
 
-    Available repositories:
+You are a query routing engine.
 
-    {repos}
+A question is asked about Kartikeya's experience, skills, projects, GitHub repositories, or schedule an interview.
+Available repositories:
 
-    Determine:
+{repos}
 
-    1. Which repository is being referenced.
-    2. Which document type is needed.
+Determine:
 
-    Document types:
+1. Which repository is being referenced.
+2. Which document type is needed.
 
-    - resume
-    - readme
-    - commit
+Document types:
 
-    Rules:
+- resume
+- readme
+- commit
 
-    - Questions about projects, architecture, tech stack, implementation → readme
-    - Questions about updates, changes, commit history → commit
-    - Questions about education, experience, skills, internships → resume
+Rules:
 
-    Return ONLY valid JSON.
+- Questions about projects, architecture, tech stack, implementation → readme
+- Questions about updates, changes, commit history → commit
+- Questions about education, experience, skills, internships → resume
 
-    Example:
+Return ONLY valid JSON.
 
-    {{
-        "repo": "vulgarVeto",
-        "document_type": "commit"
-    }}
+Example:
 
-    Question:
+{{
+    "repo": "vulgarVeto",
+    "document_type": "commit"
+}}
 
-    {query}
-    """
+Question:
+
+{query}
+"""
 
         response = client.chat.completions.create(
             model="gpt-4.1-mini",
@@ -105,7 +132,8 @@ class QueryRouter:
         try:
 
             return json.loads(
-                response.choices[0]
+                response
+                .choices[0]
                 .message.content
             )
 
