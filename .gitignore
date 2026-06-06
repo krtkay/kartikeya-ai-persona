@@ -4,8 +4,8 @@ token.pickle
 
 .venv/
 __pycache__/
-*.pyc
 
 scheduler.db
+persona.db
 
-*.log
+chroma_db/
