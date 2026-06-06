@@ -170,3 +170,30 @@ def delete_booking(
         "message":
             "Booking deleted"
     }
+
+@router.get("/debug-db")
+def debug_db():
+
+    from backend.scheduler.db import (
+        get_connection
+    )
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT name
+        FROM sqlite_master
+        WHERE type='table'
+        """
+    )
+
+    tables = cursor.fetchall()
+
+    conn.close()
+
+    return {
+        "tables": tables
+    }
