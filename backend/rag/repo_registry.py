@@ -19,7 +19,7 @@ class RepoRegistry:
             "voteEase",
             "vote_ease",
             "vulgarVeto",
-            "kartikeya-persona"
+            "kartikeya-ai-persona"
 
         ]
 
