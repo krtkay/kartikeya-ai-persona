@@ -8,15 +8,22 @@ from backend.scheduler.availability import (
     is_slot_available
 )
 
-from backend.calendar.google_calendar import (
-    GoogleCalendarService
-)
+try:
+
+    from backend.calendar.google_calendar import (
+        GoogleCalendarService
+    )
+
+    calendar = GoogleCalendarService()
+
+except Exception:
+
+    calendar = None
+
 
 router = APIRouter()
 
 scheduler = SchedulerService()
-
-calendar = GoogleCalendarService()
 
 
 @router.get("/availability")
@@ -45,14 +52,19 @@ def book(
         end_time
     )
 
-    calendar_busy = (
-    calendar.is_slot_busy(
-        start_time,
-        end_time
-    )
-)
-    
+    calendar_busy = False
+
+    if calendar:
+
+        calendar_busy = (
+            calendar.is_slot_busy(
+                start_time,
+                end_time
+            )
+        )
+
     if calendar_busy:
+
         return {
             "success": False,
             "message":
@@ -67,21 +79,25 @@ def book(
                 "Slot unavailable"
         }
 
-    event_id = (
-        calendar.create_event(
-            company_name=
-                payload["company_name"],
+    event_id = None
 
-            role_name=
-                payload["role_name"],
+    if calendar:
 
-            start_time=
-                start_time,
+        event_id = (
+            calendar.create_event(
+                company_name=
+                    payload["company_name"],
 
-            end_time=
-                end_time
+                role_name=
+                    payload["role_name"],
+
+                start_time=
+                    start_time,
+
+                end_time=
+                    end_time
+            )
         )
-    )
 
     scheduler.create_booking(
 
