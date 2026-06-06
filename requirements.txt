@@ -6,8 +6,6 @@ python-dotenv
 
 openai
 
-chromadb
-
 langchain
 langchain-community
 langchain-openai
